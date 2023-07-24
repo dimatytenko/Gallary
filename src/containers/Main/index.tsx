@@ -1,3 +1,8 @@
+import {usePhotos} from '../../hooks/photo';
+import {Gallery} from '../../components/Gallery';
+
 export const Main = () => {
-  return <div>Main</div>;
+  const {photos, isLoading} = usePhotos();
+
+  return <Gallery photos={photos} isLoading={isLoading} />;
 };

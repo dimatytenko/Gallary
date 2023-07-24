@@ -36,7 +36,7 @@ export const Main = styled.main<{$isMobile?: boolean}>`
   height: 100%;
 `;
 
-export const HeaderComponentWrapper = styled.div<{$scrolled?: boolean; $isMobile?: boolean}>`
+export const HeaderComponentWrapper = styled.header<{$scrolled?: boolean; $isMobile?: boolean}>`
   position: fixed;
   z-index: 100;
   width: 100%;

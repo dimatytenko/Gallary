@@ -6,7 +6,7 @@ import {SpinnerWrapper} from './styles';
 export const Spinner = () => {
   return (
     <SpinnerWrapper>
-      <Spin tip="Loading" size="large" />
+      <Spin size="large" />
     </SpinnerWrapper>
   );
 };
