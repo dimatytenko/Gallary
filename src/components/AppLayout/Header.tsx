@@ -1,15 +1,30 @@
-import {useState, useEffect} from 'react';
+import {FC, useState, useEffect} from 'react';
 
 import {HeaderComponentWrapper, Container, HeaderContainer} from './styles';
 import {Navigation} from '../Navigation';
 import {HomeLink} from '../../ui-kit/Button';
+import {SearchComponent} from '../Search';
+import {IconSvg} from '../../ui-kit/Icon/Svg';
 
-export const HeaderComponent = () => {
+interface IHeaderComponentProps {
+  onSearch: (value: string) => void;
+  logOut: () => void;
+  isAuth: boolean | null;
+}
+
+export const HeaderComponent: FC<IHeaderComponentProps> = ({onSearch, logOut, isAuth}) => {
   const [scrolled, setScrolled] = useState(false);
+  const [fill, setFill] = useState<'primary' | 'secondary'>('primary');
 
   useEffect(() => {
     const handleScroll = () => {
-      window?.pageYOffset > 30 ? setScrolled(true) : setScrolled(false);
+      if (window?.pageYOffset > 30) {
+        setScrolled(true);
+        setFill('secondary');
+      } else {
+        setScrolled(false);
+        setFill('primary');
+      }
     };
     window?.addEventListener('scroll', handleScroll);
     return () => window?.removeEventListener('scroll', handleScroll);
@@ -20,11 +35,17 @@ export const HeaderComponent = () => {
       <Container>
         <HeaderContainer>
           <HomeLink aria-label="Go home">
-            Logo
-            {/* <IconSvg type="logo" width={'48'} height={'48'} /> */}
+            <IconSvg type="logo" width={'40'} height={'40'} viewBox="0 0 64 64" fill={fill} stroke={fill} />
           </HomeLink>
 
-          <Navigation />
+          <SearchComponent
+            placeholder="Search high-resolution images"
+            onSearch={onSearch}
+            size={'small'}
+            enterButton={'Search'}
+          />
+
+          <Navigation isAuth={isAuth} logOut={logOut} />
         </HeaderContainer>
       </Container>
     </HeaderComponentWrapper>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Masonry, {ResponsiveMasonry} from 'react-responsive-masonry';
 import {Select} from 'antd';
 import {useNavigate} from 'react-router-dom';
@@ -8,26 +8,24 @@ import {StyledImage, SpinnerWrapper, GalleryHeader, PaginattionWrapper, GalleryW
 import {ComponentSpinner} from '../../ui-kit/Spinner';
 import {Pagination} from '../../components/Pagination';
 import {route} from '../../constants/routes';
+import {EmptyComponent} from '../../ui-kit/Empty';
 
 interface IGalleryProps {
   photos: IPhoto[];
   isLoading: boolean;
   total?: number;
+  countColumn: number;
+  handleChange: (value: string) => void;
 }
 
-export const Gallery: React.FC<IGalleryProps> = ({photos, isLoading, total}) => {
-  const [countColumn, setCountColumn] = useState(3);
+export const Gallery: React.FC<IGalleryProps> = ({photos, isLoading, total, countColumn, handleChange}) => {
   const navigate = useNavigate();
-
-  const handleChange = (value: string) => {
-    setCountColumn(Number(value));
-  };
 
   return (
     <GalleryWrapper>
       <GalleryHeader>
         <Select
-          defaultValue="3 columns"
+          defaultValue={`${countColumn} columns`}
           style={{width: 120}}
           onChange={handleChange}
           options={[
@@ -36,9 +34,18 @@ export const Gallery: React.FC<IGalleryProps> = ({photos, isLoading, total}) => 
           ]}
         />
       </GalleryHeader>
-      {isLoading || !photos.length ? (
+      {isLoading && (
         <SpinnerWrapper>
           <ComponentSpinner />
+        </SpinnerWrapper>
+      )}
+      {!photos.length && !isLoading ? (
+        <SpinnerWrapper>
+          <EmptyComponent
+            description={
+              'Unfortunately, there is no photo at your request. Maybe try changing the query or check if the query entered is correct.'
+            }
+          />
         </SpinnerWrapper>
       ) : (
         <>

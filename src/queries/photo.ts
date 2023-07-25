@@ -6,5 +6,7 @@ export const getPhotosQuery = async (page?: string | null, perPage?: string | nu
 
 export const getPhotoQuery = async (id: string) => await getQuery(photoQueryList.photo(id));
 
-export const getCollectionsQuery = async (page?: string | null, perPage?: string | null, tag?: string | null) =>
-  await getQuery(photoQueryList.collections(), page, perPage, tag);
+export const getSearchPhotosQuery = async (page?: string | null, perPage?: string | null, tag?: string | null) =>
+  await getQuery(photoQueryList.searchPhotos(), page, perPage, tag);
+
+export const getTopicsQuery = async () => await getQuery(photoQueryList.topics());

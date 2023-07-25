@@ -7,15 +7,21 @@ import {defaultTheme} from './ui-kit/theme/theme';
 import {Layout} from './containers/Layout';
 import {GlobalStyles} from './styles/index';
 import RoutesSwitch from './Routes';
+import RecoilProvider from './containers/RecoilProvider';
+import CurrentUser from './containers/CurrentUser';
 
 function App() {
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <GlobalStyles />
-      <Layout>
-        <RoutesSwitch />
-      </Layout>
-    </ThemeProvider>
+    <RecoilProvider>
+      <ThemeProvider theme={defaultTheme}>
+        <GlobalStyles />
+        <CurrentUser>
+          <Layout>
+            <RoutesSwitch />
+          </Layout>
+        </CurrentUser>
+      </ThemeProvider>
+    </RecoilProvider>
   );
 }
 

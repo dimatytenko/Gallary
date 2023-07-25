@@ -20,10 +20,10 @@ import {
 interface IPhotoProps {
   isLoading: boolean;
   photo: IPhoto | null;
-  goToSearchCollections: (tag: string) => void;
+  goToSearchPhotos: (tag: string) => void;
 }
 
-export const Photo: React.FC<IPhotoProps> = ({isLoading, photo, goToSearchCollections}) => {
+export const Photo: React.FC<IPhotoProps> = ({isLoading, photo, goToSearchPhotos}) => {
   if (isLoading) {
     return (
       <SpinnerWrapper>
@@ -55,12 +55,12 @@ export const Photo: React.FC<IPhotoProps> = ({isLoading, photo, goToSearchCollec
 
             <TagsWrapper>
               {photo.tags.map((tag) => (
-                <TagWrapper key={tag.title} onClick={() => goToSearchCollections(tag.title)}>
+                <TagWrapper key={tag.title} onClick={() => goToSearchPhotos(tag.title)}>
                   <Info>{tag.title}</Info>
                 </TagWrapper>
               ))}
               {photo.tags_preview.map((tag) => (
-                <TagWrapper key={tag.title} onClick={() => goToSearchCollections(tag.title)}>
+                <TagWrapper key={tag.title} onClick={() => goToSearchPhotos(tag.title)}>
                   <Info>{tag.title}</Info>
                 </TagWrapper>
               ))}
