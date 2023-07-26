@@ -20,6 +20,7 @@ export interface IPhoto {
   downloads: number;
   tags: ITag[];
   tags_preview: ITag[];
+  isInCollection: boolean;
 }
 
 interface ITag {

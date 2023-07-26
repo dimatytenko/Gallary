@@ -30,3 +30,16 @@ export const PaginattionWrapper = styled.div`
   margin-left: auto;
   margin-top: auto;
 `;
+
+export const ImageWrapper = styled.div`
+  position: relative;
+`;
+
+export const IconsWrapper = styled.div`
+  position: absolute;
+  top: ${({theme}) => theme.spacer._3};
+  right: ${({theme}) => theme.spacer._3};
+  display: flex;
+  gap: ${({theme}) => theme.spacer._3};
+  z-index: 1;
+`;

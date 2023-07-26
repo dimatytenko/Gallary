@@ -7,6 +7,7 @@ import {authQuery, userQuery} from '../queries/auth';
 import {route} from '../constants/routes';
 import {IUser} from '../types/user';
 import {session} from '../states/session';
+import {getCollectionsQuery} from '../queries/collection';
 
 type TokenType = string | null | undefined;
 
@@ -42,17 +43,16 @@ export const useAuth = () => {
     try {
       if (!searchParams.get('code')) return;
       const res = await authQuery(searchParams.get('code') || '');
-      console.log('res', res.body);
       setToken(res.body.access_token);
       const user = await checkAuth();
-      console.log('user-auth', user);
 
       if (user && res.body) {
-        setSession({sessionToken: res.body.access_token, user: user});
+        const collections = await getCollectionsQuery(user.username);
+        setSession({sessionToken: res.body.access_token, user: {...user, collections: collections.body}});
       }
       navigate(route.main.path);
-    } catch (error) {
-      console.log('error', error);
+    } catch (e) {
+      console.log(e);
     } finally {
       setIsLoading(false);
     }
@@ -77,9 +77,9 @@ export function useFetchSession() {
       if (!token) return setLoading(false);
 
       const res = await checkAuth();
-      console.log('fetch user', res);
       if (res) {
-        setSession({sessionToken: token, user: res});
+        const collections = await getCollectionsQuery(res.username);
+        setSession({sessionToken: token, user: {...res, collections: collections.body}});
         setLoading(false);
       } else {
         setSession(null);

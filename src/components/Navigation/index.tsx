@@ -1,22 +1,36 @@
 import {FC} from 'react';
 import {Button} from 'antd';
+import {MenuFoldOutlined} from '@ant-design/icons';
 
 import {NavigationWrapper} from './styles';
+import {REDIRECT_URL, CLIENT_ID, SERVER_AUTH_URL} from '../../constants/env';
+import {authQueryList} from '../../constants/api';
 
 interface INavigationProps {
   isAuth: boolean | null;
-  logOut: () => void;
+  showDrawer: () => void;
 }
 
-export const Navigation: FC<INavigationProps> = ({isAuth, logOut}) => {
+export const Navigation: FC<INavigationProps> = ({isAuth, showDrawer}) => {
+  const handleAuthorization = () => {
+    const responseType = 'code';
+    const scope =
+      'public+read_user+write_user+read_photos+write_photos+write_likes+write_followers+read_collections+write_collections';
+
+    const authorizationUrl = `${SERVER_AUTH_URL}${authQueryList.auth()}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URL}&response_type=${responseType}&scope=${scope}`;
+    window.location.href = authorizationUrl;
+  };
+
   return (
     <NavigationWrapper>
       {!isAuth ? (
-        <a href="https://unsplash.com/oauth/authorize?client_id=oAA6dnWfOLLcuMlw5cSi1gIOlezBlOCdxT2eqwTyEtA&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth&response_type=code&scope=public+read_user+write_user+read_photos+write_photos+write_likes+write_followers+read_collections+write_collections">
-          <Button>Log in</Button>
-        </a>
+        <Button onClick={handleAuthorization}>Log in</Button>
       ) : (
-        <Button onClick={logOut}>Log out</Button>
+        <>
+          <Button onClick={showDrawer}>
+            <MenuFoldOutlined />
+          </Button>
+        </>
       )}
     </NavigationWrapper>
   );

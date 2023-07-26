@@ -1,12 +1,16 @@
+import {FC} from 'react';
+
 import {HeaderComponent} from '../../../components/AppLayout/Header';
 import {useSearchPhotos} from '../../../hooks/photo';
-import {useLogOut} from '../../../hooks/auth';
 import {useViewer} from '../../../hooks/user';
 
-export const Header = () => {
+interface IHeaderProps {
+  showDrawer: () => void;
+}
+
+export const Header: FC<IHeaderProps> = ({showDrawer}) => {
   const {goToSearchPhotos} = useSearchPhotos();
-  const logOut = useLogOut();
   const viewer = useViewer();
 
-  return <HeaderComponent onSearch={goToSearchPhotos} logOut={logOut} isAuth={!!viewer} />;
+  return <HeaderComponent onSearch={goToSearchPhotos} isAuth={!!viewer} showDrawer={showDrawer} />;
 };

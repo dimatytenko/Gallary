@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Media} from '../../ui-kit/theme/breakpoints';
 import {TextSmall} from '../../ui-kit/Typography/styles';
 import {defaultTheme} from '../../ui-kit/theme/theme';
+import {TextBody3} from '../../ui-kit/Typography/styles';
 
 export const StyledLayout = styled.div`
   min-height: 100%;
@@ -80,4 +81,26 @@ export const FooterContainer = styled.div`
 export const TextCopy = styled(TextSmall)`
   color: ${({theme}) => theme.palette.colors.secondary};
 `;
+// ======================
+
+// Drawer
+export const DrawerContent = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const Label = styled(TextBody3)`
+  color: ${({theme}) => theme.palette.colors.grayscale};
+  display: block;
+`;
+
+export const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({theme}) => theme.spacer._1};
+`;
+
 // ======================

@@ -5,12 +5,14 @@ import {Gallery} from '../../components/Gallery';
 import {Tag} from '../../components/Tag';
 import {useCommon} from '../../hooks/common';
 import {Tags} from '../../components/Tags';
+import {useCollection} from '../../hooks/collection';
 
 export const SearchPhotos = () => {
   const {photos, isLoading, tag} = useSearch();
   const {countColumn, handleChange} = useCommon();
   const {goToSearchPhotos} = useSearchPhotos();
   const {topics} = useTopicsList();
+  const {collectionId, addToCollection, removeFromCollection, photos: collection} = useCollection();
 
   return (
     <>
@@ -22,6 +24,10 @@ export const SearchPhotos = () => {
         total={photos?.total}
         handleChange={handleChange}
         countColumn={countColumn}
+        collectionId={collectionId}
+        addToCollection={addToCollection}
+        removeFromCollection={removeFromCollection}
+        collection={collection}
       />
     </>
   );

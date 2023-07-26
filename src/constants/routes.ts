@@ -5,4 +5,5 @@ export const route = {
   auth: Route.of({path: '/auth'}),
   photoDetails: Route.of<{id: string}>({path: '/:id'}),
   searchPhotos: Route.of<{tag: string}>({path: '/search/photos/:tag'}),
+  collection: Route.of({path: '/collection'}),
 };

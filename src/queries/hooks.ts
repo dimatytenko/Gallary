@@ -1,5 +1,5 @@
 import superagent from 'superagent';
-import {SERVER_URL, SERVER_AUTH_URL, CLIENT_ID, CLIENT_SECRET_ID, REDIRECT_URL} from '../constants/env';
+import {SERVER_URL, CLIENT_ID, CLIENT_SECRET_ID, REDIRECT_URL, SERVER_AUTH_URL} from '../constants/env';
 import {getToken} from '../hooks/auth';
 
 export const getQuery = (query: string, page?: string | null, perPage?: string | null, tag?: string | null) => {
@@ -10,6 +10,12 @@ export const getQuery = (query: string, page?: string | null, perPage?: string |
   );
 };
 
+export const postQuery = (query: string, code?: string) => {
+  return superagent.post(
+    `${SERVER_AUTH_URL}${query}?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET_ID}&redirect_uri=${REDIRECT_URL}&grant_type=authorization_code&code=${code}`,
+  );
+};
+
 export const getBearerQuery = (query: string) => {
   const bearerToken = getToken();
   if (bearerToken) return superagent.get(`${SERVER_URL}${query}`).set('Authorization', 'Bearer ' + bearerToken);
@@ -17,8 +23,16 @@ export const getBearerQuery = (query: string) => {
   return superagent.get(`${SERVER_URL}${query}`);
 };
 
-export const postQuery = (query: string, code?: string) => {
-  return superagent.post(
-    `${SERVER_AUTH_URL}${query}?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET_ID}&redirect_uri=${REDIRECT_URL}&grant_type=authorization_code&code=${code}`,
-  );
+export const postBearerQuery = (query: string) => {
+  const bearerToken = getToken();
+  if (bearerToken) return superagent.post(`${SERVER_URL}${query}`).set('Authorization', 'Bearer ' + bearerToken);
+
+  return superagent.post(`${SERVER_URL}${query}`);
+};
+
+export const deleteBearerQuery = (query: string) => {
+  const bearerToken = getToken();
+  if (bearerToken) return superagent.delete(`${SERVER_URL}${query}`).set('Authorization', 'Bearer ' + bearerToken);
+
+  return superagent.delete(`${SERVER_URL}${query}`);
 };

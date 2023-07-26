@@ -8,11 +8,11 @@ import {IconSvg} from '../../ui-kit/Icon/Svg';
 
 interface IHeaderComponentProps {
   onSearch: (value: string) => void;
-  logOut: () => void;
   isAuth: boolean | null;
+  showDrawer: () => void;
 }
 
-export const HeaderComponent: FC<IHeaderComponentProps> = ({onSearch, logOut, isAuth}) => {
+export const HeaderComponent: FC<IHeaderComponentProps> = ({onSearch, isAuth, showDrawer}) => {
   const [scrolled, setScrolled] = useState(false);
   const [fill, setFill] = useState<'primary' | 'secondary'>('primary');
 
@@ -45,7 +45,7 @@ export const HeaderComponent: FC<IHeaderComponentProps> = ({onSearch, logOut, is
             enterButton={'Search'}
           />
 
-          <Navigation isAuth={isAuth} logOut={logOut} />
+          <Navigation isAuth={isAuth} showDrawer={showDrawer} />
         </HeaderContainer>
       </Container>
     </HeaderComponentWrapper>
