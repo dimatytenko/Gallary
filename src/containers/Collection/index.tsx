@@ -20,7 +20,7 @@ export const Collection = () => {
         countColumn={countColumn}
         removeFromCollection={removeFromCollection}
         collectionId={collectionId}
-        collection={[]}
+        secondary
       />
     </>
   );

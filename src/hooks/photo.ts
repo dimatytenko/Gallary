@@ -6,18 +6,23 @@ import {getPhotosQuery, getPhotoQuery, getSearchPhotosQuery, getTopicsQuery} fro
 import {IPhoto, ISearchPhotos} from '../types/photo';
 import {route} from '../constants/routes';
 import {commonState} from '../states/common';
+import {useCollection} from './collection';
+import {addToCollectionQuery, removeFromCollectionQuery} from '../queries/collection';
 
 export const usePhotos = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [photos, setPhotos] = useState<IPhoto[]>([]);
   const [searchParams] = useSearchParams();
+  const {isLoading: isCollectionLoading, collectionId, photos: collection} = useCollection();
 
   const fetchPhotos = async () => {
     try {
       const res = await getPhotosQuery(searchParams.get('page'), searchParams.get('per_page'));
-      if (res.ok) {
-        setPhotos(res.body);
-      }
+      const newPhotos = res.body.map((photo: IPhoto) => {
+        const isAdded = collection?.some((item) => item.id === photo.id);
+        return {...photo, isInCollection: isAdded};
+      });
+      setPhotos(newPhotos);
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -26,11 +31,46 @@ export const usePhotos = () => {
 
   useEffect(() => {
     fetchPhotos();
-  }, [searchParams.get('page'), searchParams.get('per_page')]);
+  }, [searchParams.get('page'), searchParams.get('per_page'), collectionId]);
+
+  const addToCollection = async (photoId: string) => {
+    try {
+      if (!collectionId) return;
+      await addToCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
+      const sortPhotos = photos.map((photo) => {
+        if (photo.id === photoId) {
+          return {...photo, isInCollection: true};
+        }
+        return photo;
+      });
+      setPhotos(sortPhotos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const removeFromCollection = async (photoId: string) => {
+    try {
+      if (!collectionId) return;
+      await removeFromCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
+      const sortPhotos = photos.map((photo) => {
+        if (photo.id === photoId) {
+          return {...photo, isInCollection: false};
+        }
+        return photo;
+      });
+      setPhotos(sortPhotos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return {
     photos,
-    isLoading,
+    isLoading: isCollectionLoading || isLoading,
+    collectionId,
+    addToCollection,
+    removeFromCollection,
   };
 };
 
@@ -67,13 +107,16 @@ export const useSearch = () => {
   const [photos, setPhotos] = useState<ISearchPhotos | null>(null);
   const [searchParams] = useSearchParams();
   const {tag} = useParams<{tag: string}>();
+  const {isLoading: isCollectionLoading, collectionId, photos: collection} = useCollection();
 
   const fetchCollections = async () => {
     try {
       const res = await getSearchPhotosQuery(searchParams.get('page'), searchParams.get('per_page'), tag);
-      if (res.ok) {
-        setPhotos(res.body);
-      }
+      const newPhotos = res.body.results.map((photo: IPhoto) => {
+        const isAdded = collection?.some((item) => item.id === photo.id);
+        return {...photo, isInCollection: isAdded};
+      });
+      setPhotos({...res.body, results: newPhotos});
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -84,9 +127,44 @@ export const useSearch = () => {
     fetchCollections();
   }, [searchParams.get('page'), searchParams.get('per_page'), tag]);
 
+  const addToCollection = async (photoId: string) => {
+    try {
+      if (!collectionId || !photos) return;
+      await addToCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
+      const sortPhotos = photos.results.map((photo) => {
+        if (photo.id === photoId) {
+          return {...photo, isInCollection: true};
+        }
+        return photo;
+      });
+      setPhotos({...photos, results: sortPhotos});
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const removeFromCollection = async (photoId: string) => {
+    try {
+      if (!collectionId || !photos) return;
+      await removeFromCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
+      const sortPhotos = photos.results.map((photo) => {
+        if (photo.id === photoId) {
+          return {...photo, isInCollection: false};
+        }
+        return photo;
+      });
+      setPhotos({...photos, results: sortPhotos});
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return {
     photos,
-    isLoading,
+    isLoading: isCollectionLoading || isLoading,
+    collectionId,
+    addToCollection,
+    removeFromCollection,
     tag,
   };
 };

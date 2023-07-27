@@ -2,14 +2,12 @@ import {usePhotos, useTopicsList, useSearchPhotos} from '../../hooks/photo';
 import {Gallery} from '../../components/Gallery';
 import {useCommon} from '../../hooks/common';
 import {Tags} from '../../components/Tags';
-import {useCollection} from '../../hooks/collection';
 
 export const Main = () => {
-  const {photos, isLoading} = usePhotos();
+  const {photos, isLoading, collectionId, addToCollection, removeFromCollection} = usePhotos();
   const {countColumn, handleChange} = useCommon();
   const {topics} = useTopicsList();
   const {goToSearchPhotos} = useSearchPhotos();
-  const {collectionId, addToCollection, removeFromCollection, photos: collection} = useCollection();
 
   return (
     <>
@@ -22,7 +20,6 @@ export const Main = () => {
         collectionId={collectionId}
         addToCollection={addToCollection}
         removeFromCollection={removeFromCollection}
-        collection={collection}
       />
     </>
   );

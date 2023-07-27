@@ -1,11 +1,6 @@
 import {useState, useEffect} from 'react';
-
-import {
-  createCollectionQuery,
-  addToCollectionQuery,
-  removeFromCollectionQuery,
-  getCollectionQuery,
-} from '../queries/collection';
+import {message} from 'antd';
+import {createCollectionQuery, removeFromCollectionQuery, getCollectionQuery} from '../queries/collection';
 import {useViewer} from './user';
 import {IPhoto} from '../types/photo';
 
@@ -17,30 +12,19 @@ export const useCollection = () => {
 
   const createCollection = async () => {
     try {
-      await createCollectionQuery({title: 'custom collection'});
+      const res = await createCollectionQuery({title: 'custom collection'});
+      setCollectionId(res.body.id);
     } catch (e) {
       console.log(e);
-    }
-  };
-
-  const addToCollection = async (photoId: string) => {
-    try {
-      if (!collectionId) return;
-      const res = await addToCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
-      console.log('res.body', res.body);
-      setPhotos([...photos, res.body.photo]);
-    } catch (e) {
-      console.log(e);
+      message.info('You need to confirm your email!');
     }
   };
 
   const removeFromCollection = async (photoId: string) => {
     try {
       if (!collectionId) return;
-      const res = await removeFromCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
-      if (res.ok) {
-        setPhotos(photos.filter((photo) => photo.id !== photoId));
-      }
+      await removeFromCollectionQuery(collectionId, {collection_id: collectionId, photo_id: photoId});
+      setPhotos(photos.filter((photo) => photo.id !== photoId));
     } catch (e) {
       console.log(e);
     }
@@ -50,9 +34,7 @@ export const useCollection = () => {
     try {
       if (!collectionId) return;
       const res = await getCollectionQuery(collectionId);
-      if (res.ok) {
-        setPhotos(res.body);
-      }
+      setPhotos(res.body);
     } catch (e) {
       console.log(e);
     } finally {
@@ -75,7 +57,6 @@ export const useCollection = () => {
   return {
     createCollection,
     collectionId,
-    addToCollection,
     removeFromCollection,
     photos,
     isLoading,

@@ -32,6 +32,11 @@ export const AppLayout: FC<IAppLayoutProps> = ({
     onClose?.();
   };
 
+  const onCreateCollection = () => {
+    createCollection();
+    onClose?.();
+  };
+
   return (
     <StyledLayout {...props}>
       {!hideHeader && header}
@@ -41,7 +46,7 @@ export const AppLayout: FC<IAppLayoutProps> = ({
           <DrawerContent>
             <>
               {!collectionId ? (
-                <Button onClick={createCollection}>Create a collection</Button>
+                <Button onClick={onCreateCollection}>Create a collection</Button>
               ) : (
                 <InfoWrapper>
                   <Label>{user?.username}</Label>
