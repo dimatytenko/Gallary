@@ -24,6 +24,7 @@ export const SpinnerWrapper = styled.div`
 export const GalleryHeader = styled.div`
   display: flex;
   justify-content: flex-end;
+  gap: ${({theme}) => theme.spacer._2};
 `;
 
 export const PaginattionWrapper = styled.div`
@@ -31,8 +32,23 @@ export const PaginattionWrapper = styled.div`
   margin-top: auto;
 `;
 
-export const ImageWrapper = styled.div`
+export const ImageWrapper = styled.div<{height?: number}>`
   position: relative;
+  cupsor: pointer;
+  transition: opacity 0.3s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  & > div {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  &:hover > div {
+    opacity: 1;
+  }
 `;
 
 export const IconsWrapper = styled.div`

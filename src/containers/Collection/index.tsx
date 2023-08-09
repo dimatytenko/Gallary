@@ -6,7 +6,7 @@ import {useCollection} from '../../hooks/collection';
 import {useCommon} from '../../hooks/common';
 
 export const Collection = () => {
-  const {countColumn, handleChange} = useCommon();
+  const {countColumn, handleChange, mode, handleChangeMode} = useCommon();
   const {photos, isLoading, removeFromCollection, collectionId} = useCollection();
 
   return (
@@ -21,6 +21,8 @@ export const Collection = () => {
         removeFromCollection={removeFromCollection}
         collectionId={collectionId}
         secondary
+        mode={mode}
+        handleChangeMode={handleChangeMode}
       />
     </>
   );

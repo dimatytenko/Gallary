@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react';
 import {useSearchParams, useParams, useNavigate} from 'react-router-dom';
-import {useRecoilState} from 'recoil';
+import {useRecoilState, useRecoilValue} from 'recoil';
 
 import {getPhotosQuery, getPhotoQuery, getSearchPhotosQuery, getTopicsQuery} from '../queries/photo';
 import {IPhoto, ISearchPhotos} from '../types/photo';
 import {route} from '../constants/routes';
-import {commonState} from '../states/common';
+import {commonState, Mode} from '../states/common';
 import {useCollection} from './collection';
 import {addToCollectionQuery, removeFromCollectionQuery} from '../queries/collection';
 
@@ -14,24 +14,58 @@ export const usePhotos = () => {
   const [photos, setPhotos] = useState<IPhoto[]>([]);
   const [searchParams] = useSearchParams();
   const {isLoading: isCollectionLoading, collectionId, photos: collection} = useCollection();
+  const {mode} = useRecoilValue(commonState);
+  const [page, setPage] = useState(2);
+  const [fetching, setFetching] = useState(false);
 
-  const fetchPhotos = async () => {
+  // eslint-disable-next-line
+  // @ts-ignore
+  const scrollHandler = (e) => {
+    if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100) {
+      setFetching(true);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === Mode.PAGE) return;
+    if (fetching) {
+      fetchPhotos(page.toString());
+      setPage((prev) => prev + 1);
+    }
+  }, [fetching]);
+
+  useEffect(() => {
+    if (mode === Mode.PAGE) return;
+    document.addEventListener('scroll', scrollHandler);
+    return () => {
+      document.removeEventListener('scroll', scrollHandler);
+    };
+  }, [mode]);
+
+  const fetchPhotos = async (page: string | null, perPage?: string | null) => {
     try {
-      const res = await getPhotosQuery(searchParams.get('page'), searchParams.get('per_page'));
+      const res = await getPhotosQuery(page, perPage);
       const newPhotos = res.body.map((photo: IPhoto) => {
         const isAdded = collection?.some((item) => item.id === photo.id);
         return {...photo, isInCollection: isAdded};
       });
-      setPhotos(newPhotos);
-    } catch (error) {
+      mode === Mode.PAGE
+        ? setPhotos(newPhotos)
+        : !photos.length
+        ? setPhotos(newPhotos)
+        : setPhotos((prev) => [...prev, ...newPhotos]);
+
+      setFetching(false);
+    } catch (e) {
+      console.log(e);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPhotos();
-  }, [searchParams.get('page'), searchParams.get('per_page'), collectionId]);
+    fetchPhotos(searchParams.get('page'), searchParams.get('per_page'));
+  }, [searchParams.get('page'), searchParams.get('per_page'), collectionId, !!collection.length]);
 
   const addToCollection = async (photoId: string) => {
     try {
@@ -108,15 +142,54 @@ export const useSearch = () => {
   const [searchParams] = useSearchParams();
   const {tag} = useParams<{tag: string}>();
   const {isLoading: isCollectionLoading, collectionId, photos: collection} = useCollection();
+  const {mode} = useRecoilValue(commonState);
+  const [page, setPage] = useState(2);
+  const [fetching, setFetching] = useState(false);
+  const [beforeTag, setBeforeTag] = useState<string | undefined>('');
 
-  const fetchCollections = async () => {
+  // eslint-disable-next-line
+  // @ts-ignore
+  const scrollHandler = (e) => {
+    if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100) {
+      setFetching(true);
+    }
+  };
+
+  useEffect(() => {
+    if (mode === Mode.PAGE) return;
+    if (fetching) {
+      fetchPhotos(page.toString());
+      setPage((prev) => prev + 1);
+    }
+  }, [fetching]);
+
+  useEffect(() => {
+    if (mode === Mode.PAGE) return;
+    document.addEventListener('scroll', scrollHandler);
+    return () => {
+      document.removeEventListener('scroll', scrollHandler);
+    };
+  }, [mode]);
+
+  const fetchPhotos = async (page: string | null, perPage?: string | null) => {
     try {
-      const res = await getSearchPhotosQuery(searchParams.get('page'), searchParams.get('per_page'), tag);
+      const res = await getSearchPhotosQuery(page, perPage, tag);
       const newPhotos = res.body.results.map((photo: IPhoto) => {
         const isAdded = collection?.some((item) => item.id === photo.id);
         return {...photo, isInCollection: isAdded};
       });
-      setPhotos({...res.body, results: newPhotos});
+      if (beforeTag !== tag) {
+        setPhotos({...res.body, results: newPhotos});
+        setBeforeTag(tag);
+        return;
+      }
+
+      mode === Mode.PAGE
+        ? setPhotos({...res.body, results: newPhotos})
+        : !photos?.results.length
+        ? setPhotos({...res.body, results: newPhotos})
+        : setPhotos((prev) => ({...res.body, results: prev && [...prev?.results, ...newPhotos]}));
+      setFetching(false);
     } catch (error) {
     } finally {
       setIsLoading(false);
@@ -124,8 +197,8 @@ export const useSearch = () => {
   };
 
   useEffect(() => {
-    fetchCollections();
-  }, [searchParams.get('page'), searchParams.get('per_page'), tag]);
+    fetchPhotos(searchParams.get('page'), searchParams.get('per_page'));
+  }, [searchParams.get('page'), searchParams.get('per_page'), tag, collectionId, !!collection.length]);
 
   const addToCollection = async (photoId: string) => {
     try {

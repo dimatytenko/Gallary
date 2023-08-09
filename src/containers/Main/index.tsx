@@ -5,7 +5,7 @@ import {Tags} from '../../components/Tags';
 
 export const Main = () => {
   const {photos, isLoading, collectionId, addToCollection, removeFromCollection} = usePhotos();
-  const {countColumn, handleChange} = useCommon();
+  const {countColumn, handleChange, mode, handleChangeMode} = useCommon();
   const {topics} = useTopicsList();
   const {goToSearchPhotos} = useSearchPhotos();
 
@@ -20,6 +20,8 @@ export const Main = () => {
         collectionId={collectionId}
         addToCollection={addToCollection}
         removeFromCollection={removeFromCollection}
+        mode={mode}
+        handleChangeMode={handleChangeMode}
       />
     </>
   );

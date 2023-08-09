@@ -18,6 +18,7 @@ import {ComponentSpinner} from '../../ui-kit/Spinner';
 import {Pagination} from '../../components/Pagination';
 import {route} from '../../constants/routes';
 import {EmptyComponent} from '../../ui-kit/Empty';
+import {Mode} from '../../states/common';
 
 interface IGalleryProps {
   photos: IPhoto[];
@@ -29,6 +30,8 @@ interface IGalleryProps {
   addToCollection?: (id: string) => void;
   removeFromCollection?: (id: string) => void;
   secondary?: boolean;
+  mode?: Mode;
+  handleChangeMode: (value: Mode) => void;
 }
 
 export const Gallery: React.FC<IGalleryProps> = ({
@@ -41,21 +44,36 @@ export const Gallery: React.FC<IGalleryProps> = ({
   addToCollection,
   removeFromCollection,
   secondary,
+  mode,
+  handleChangeMode,
 }) => {
   const navigate = useNavigate();
 
   return (
     <GalleryWrapper>
       <GalleryHeader>
-        <Select
-          defaultValue={`${countColumn} columns`}
-          style={{width: 120}}
-          onChange={handleChange}
-          options={[
-            {value: '3', label: '3 columns'},
-            {value: '5', label: '5 columns'},
-          ]}
-        />
+        {countColumn && (
+          <Select
+            defaultValue={`${countColumn} columns`}
+            style={{width: 120}}
+            onChange={handleChange}
+            options={[
+              {value: '3', label: '3 columns'},
+              {value: '5', label: '5 columns'},
+            ]}
+          />
+        )}
+        {mode && (
+          <Select
+            defaultValue={mode}
+            style={{width: 120}}
+            onChange={handleChangeMode}
+            options={[
+              {value: Mode.PAGE, label: Mode.PAGE},
+              {value: Mode.LIST, label: Mode.LIST},
+            ]}
+          />
+        )}
       </GalleryHeader>
       {isLoading && (
         <SpinnerWrapper>
@@ -109,9 +127,13 @@ export const Gallery: React.FC<IGalleryProps> = ({
               ))}
             </Masonry>
           </ResponsiveMasonry>
-          <PaginattionWrapper>
-            <Pagination total={total || 1000} />
-          </PaginattionWrapper>
+          <>
+            {mode === Mode.PAGE && (
+              <PaginattionWrapper>
+                <Pagination total={total || 1000} />
+              </PaginattionWrapper>
+            )}
+          </>
         </>
       )}
     </GalleryWrapper>
