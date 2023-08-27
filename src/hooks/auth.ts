@@ -75,7 +75,6 @@ export function useFetchSession() {
     const setAuthorize = async () => {
       setLoading(true);
       if (!token) return setLoading(false);
-
       const res = await checkAuth();
       if (res) {
         const collections = await getCollectionsQuery(res.username);

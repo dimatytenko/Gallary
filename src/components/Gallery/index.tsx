@@ -31,7 +31,7 @@ interface IGalleryProps {
   removeFromCollection?: (id: string) => void;
   secondary?: boolean;
   mode?: Mode;
-  handleChangeMode: (value: Mode) => void;
+  handleChangeMode?: (value: Mode) => void;
 }
 
 export const Gallery: React.FC<IGalleryProps> = ({
@@ -48,6 +48,7 @@ export const Gallery: React.FC<IGalleryProps> = ({
   handleChangeMode,
 }) => {
   const navigate = useNavigate();
+  console.log(isLoading);
 
   return (
     <GalleryWrapper>

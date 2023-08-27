@@ -51,9 +51,9 @@ export const usePhotos = () => {
       });
       mode === Mode.PAGE
         ? setPhotos(newPhotos)
-        : !photos.length
-        ? setPhotos(newPhotos)
-        : setPhotos((prev) => [...prev, ...newPhotos]);
+        : !!photos.length
+        ? setPhotos((prev) => [...prev, ...newPhotos])
+        : setPhotos(newPhotos);
 
       setFetching(false);
     } catch (e) {
@@ -65,7 +65,7 @@ export const usePhotos = () => {
 
   useEffect(() => {
     fetchPhotos(searchParams.get('page'), searchParams.get('per_page'));
-  }, [searchParams.get('page'), searchParams.get('per_page'), collectionId, !!collection.length]);
+  }, [searchParams.get('page'), searchParams.get('per_page')]);
 
   const addToCollection = async (photoId: string) => {
     try {
@@ -198,7 +198,7 @@ export const useSearch = () => {
 
   useEffect(() => {
     fetchPhotos(searchParams.get('page'), searchParams.get('per_page'));
-  }, [searchParams.get('page'), searchParams.get('per_page'), tag, collectionId, !!collection.length]);
+  }, [searchParams.get('page'), searchParams.get('per_page'), tag]);
 
   const addToCollection = async (photoId: string) => {
     try {

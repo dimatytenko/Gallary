@@ -8,7 +8,7 @@ export const useCollection = () => {
   const user = useViewer();
   const [collectionId, setCollectionId] = useState<string | null>(null);
   const [photos, setPhotos] = useState<IPhoto[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const createCollection = async () => {
     try {
@@ -32,6 +32,7 @@ export const useCollection = () => {
 
   const fetchCollection = async () => {
     try {
+      setIsLoading(true);
       if (!collectionId) return;
       const res = await getCollectionQuery(collectionId);
       setPhotos(res.body);
